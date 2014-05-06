@@ -130,15 +130,25 @@ print("HScroll: " + str(hscrolldelta))
 
 print("End of Initialisation")
 print()
+p1.terminate()
+p2.terminate()
+p3.terminate()
 time = 0
 lasttime = -1
 v = virtkey.virtkey()
-p = subprocess.Popen(['synclient', '-m', '10'], stdout=subprocess.PIPE)
+
+command = "ps -af"
+print(subprocess.call(command.split()))
+
+p = subprocess.Popen(['synclient -m 10'], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)
 for line in p.stdout:
 	data = str(line, encoding='utf8' ).split() 
 	#	0	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16
 	#	time	x	y	z	f	w	l	r	u	d	m	multi	gl	gm	gr	gdx	gdy
+#	print(data);
 	if data[0] == 'time':
+		continue
+	elif data[0] == 'Parameter':
 		continue
 	else:
 		time = float(data[0])
@@ -160,38 +170,43 @@ for line in p.stdout:
 		cleanHistButNot(0)
 		if action[2] == 3:
 			if action[0] == 'y' and action[1] == '+':		#Up
-				print("Up")
+				#print("Up")
 				pressKeys([0xffeb, 0xff55])
 			elif action[0] == 'y' and action[1] == '-':	#Down
-				print("Down")
+				#print("Down")
 				pressKeys([0xffeb, 0xff56])
 			elif action[0] == 'x' and action[1] == '+':
-				print("Left")
+				#print("Left")
+				pressKeys([])
 			elif action[0] == 'x' and action[1] == '-':
-				print("Right")
+				#print("Right")
+				pressKeys([])
 		elif action[2] == 4:
 			if action[0] == 'y' and action[1] == '+':		#Up
-				print("Up")
+				#print("Up")
 				pressKeys([0xffeb, 0xff52])
 			elif action[0] == 'y' and action[1] == '-':	#Down
-				print("Down")
+				#print("Down")
 				pressKeys([0xffeb, 0xff54])
 			elif action[0] == 'x' and action[1] == '+':	#left
-				print("Left")
+				#print("Left")
 				pressKeys([0xffeb, 0xff51])
 			elif action[0] == 'x' and action[1] == '-':	#right
-				print("Right")
+				#print("Right")
 				pressKeys([0xffeb, 0xff53])
 		elif action[2] == 5:
 			if action[0] == 'y' and action[1] == '+':		#Up
-				print("Up")
+				#print("Up")
+				pressKeys([])
 			elif action[0] == 'y' and action[1] == '-':	#Down
-				print("Down")
+				#print("Down")
+				pressKeys([])
 			elif action[0] == 'x' and action[1] == '+':	#left
-				print("Left")
+				#print("Left")
+				pressKeys([])
 			elif action[0] == 'x' and action[1] == '-':	#right
-				print("Right")
+				#print("Right")
+				pressKeys([])
 
 		lasttime = time
-		
 p.stdout.close()
