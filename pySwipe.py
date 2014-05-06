@@ -91,6 +91,9 @@ for line in p3.stdout:
 	elif data[0] == 'BottomEdge':
 		BottomEdge = int(data[2])
 p3.stdout.close()
+p1.wait()
+p2.wait()
+p3.wait()
 #LeftEdge
 #RightEdge
 #TopEdge
@@ -130,15 +133,12 @@ print("HScroll: " + str(hscrolldelta))
 
 print("End of Initialisation")
 print()
-p1.terminate()
-p2.terminate()
-p3.terminate()
+p1.wait()
+p2.wait()
+p3.wait()
 time = 0
 lasttime = -1
 v = virtkey.virtkey()
-
-command = "ps -af"
-print(subprocess.call(command.split()))
 
 p = subprocess.Popen(['synclient -m 10'], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)
 for line in p.stdout:
@@ -210,3 +210,4 @@ for line in p.stdout:
 
 		lasttime = time
 p.stdout.close()
+p.wait()
