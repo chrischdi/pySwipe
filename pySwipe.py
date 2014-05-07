@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import imp
-modules = set(["subprocess", "virtkey", "configparser"])
+modules = set(["subprocess", "virtkey", "configparser", "os"])
 for m in modules:
 	try:
 		imp.find_module(m)
@@ -12,6 +12,7 @@ for m in modules:
 import subprocess
 import virtkey
 import configparser
+import os
 
 baseDist = 0.1 # Influences Treshold
 tresholdRate = 0.4
@@ -28,7 +29,7 @@ def stringToKeys(keys):
 
 def parseConfig():
 	config = configparser.ConfigParser()
-	config.read('pySwipe.ini')
+	config.read(os.environ['HOME'] + '/.pySwipe/pySwipe.ini')
 	fingers = {}
 	for section in config.sections():
 		fingers[(section, 'down')] = stringToKeys(config.get(section, 'down'))
