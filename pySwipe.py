@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import imp
-modules = set(["subprocess", "virtkey"])
+modules = set(["subprocess", "virtkey", "configparser"])
 for m in modules:
 	try:
 		imp.find_module(m)
@@ -11,6 +11,7 @@ for m in modules:
 
 import subprocess
 import virtkey
+import configparser
 
 baseDist = 0.1 # Influences Treshold
 tresholdRate = 0.4
@@ -18,6 +19,23 @@ timedif = 0.4 # Zeit in Sekunden Zwischen moeglichen Aktionen
 
 hist = [ [[],[]], [[],[]], [[],[]], [[],[]], [[],[]] ] # Array fuer History 1 bis 5, wobei 1 index 0 hat
 lasttime = 0.0
+
+def stringToKeys(keys):
+	ret = []
+	for key in keys.split():
+		ret.append(int(key, 16))
+	return ret
+
+def parseConfig():
+	config = configparser.ConfigParser()
+	config.read('pySwipe.ini')
+	fingers = {}
+	for section in config.sections():
+		fingers[(section, 'down')] = stringToKeys(config.get(section, 'down'))
+		fingers[(section, 'up')] = stringToKeys(config.get(section, 'up'))
+		fingers[(section, 'right')] = stringToKeys(config.get(section, 'right'))
+		fingers[(section, 'left')] = stringToKeys(config.get(section, 'left'))
+	return fingers
 
 def detect(finger):
 	global data
@@ -156,8 +174,11 @@ def main ():
 	p3.wait()
 	time = 0
 	lasttime = -1
-	v = virtkey.virtkey()
 
+	#Get Finger Configuration
+	fingers = parseConfig()
+
+	v = virtkey.virtkey()
 	p = subprocess.Popen(['synclient -m 10'], stdout=subprocess.PIPE, stderr = subprocess.STDOUT, shell = True)
 	for line in p.stdout:
 		data = str(line, encoding='utf8' ).split() 
@@ -189,42 +210,42 @@ def main ():
 			if action[2] == 3:
 				if action[0] == 'y' and action[1] == '+':		#Up
 					#print("Up")
-					pressKeys([0xffeb, 0xff55])
+					pressKeys(fingers[('3', 'up')])
 				elif action[0] == 'y' and action[1] == '-':	#Down
 					#print("Down")
-					pressKeys([0xffeb, 0xff56])
+					pressKeys(fingers[('3', 'down')])
 				elif action[0] == 'x' and action[1] == '+':
 					#print("Left")
-					pressKeys([])
+					pressKeys(fingers[('3', 'left')])
 				elif action[0] == 'x' and action[1] == '-':
 					#print("Right")
-					pressKeys([])
+					pressKeys(fingers[('3', 'right')])
 			elif action[2] == 4:
 				if action[0] == 'y' and action[1] == '+':		#Up
 					#print("Up")
-					pressKeys([0xffeb, 0xff52])
+					pressKeys(fingers[('4', 'up')])
 				elif action[0] == 'y' and action[1] == '-':	#Down
 					#print("Down")
-					pressKeys([0xffeb, 0xff54])
-				elif action[0] == 'x' and action[1] == '+':	#left
+					pressKeys(fingers[('4', 'down')])
+				elif action[0] == 'x' and action[1] == '+':
 					#print("Left")
-					pressKeys([0xffeb, 0xff51])
-				elif action[0] == 'x' and action[1] == '-':	#right
+					pressKeys(fingers[('4', 'left')])
+				elif action[0] == 'x' and action[1] == '-':
 					#print("Right")
-					pressKeys([0xffeb, 0xff53])
+					pressKeys(fingers[('4', 'right')])
 			elif action[2] == 5:
 				if action[0] == 'y' and action[1] == '+':		#Up
 					#print("Up")
-					pressKeys([])
+					pressKeys(fingers[('5', 'up')])
 				elif action[0] == 'y' and action[1] == '-':	#Down
 					#print("Down")
-					pressKeys([])
-				elif action[0] == 'x' and action[1] == '+':	#left
+					pressKeys(fingers[('5', 'down')])
+				elif action[0] == 'x' and action[1] == '+':
 					#print("Left")
-					pressKeys([])
-				elif action[0] == 'x' and action[1] == '-':	#right
+					pressKeys(fingers[('5', 'left')])
+				elif action[0] == 'x' and action[1] == '-':
 					#print("Right")
-					pressKeys([])
+					pressKeys(fingers[('5', 'right')])
 
 			lasttime = time
 	p.stdout.close()
