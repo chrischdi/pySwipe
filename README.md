@@ -10,7 +10,7 @@ Python script to enable swipe gestures on a touchpad.
 # How to
 1. Install prerequisites
 2. Grab the pySwipe.py script
-3. Edit the script to match your shortcut keys
+3. Edit the script to match your shortcut keys (You can find the symkeys in /usr/include/X11/keysymdef.h or get it via the command "xev")
 4. Start pySwipe
 
 # Todo
