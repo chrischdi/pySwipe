@@ -113,35 +113,30 @@ def main ():
 	global hscrolldelta
 	global v
 
-	# eckengrenzen
+
+	#def parseTouchConfig()
+	synvars = {}
 	p1 = subprocess.Popen(['synclient', '-l'], stdout=subprocess.PIPE)
-	p2 = subprocess.Popen(['grep', 'Edge'], stdin=p1.stdout, stdout=subprocess.PIPE)
+	for line in p1.stdout:
+		line = str(line, encoding='utf8').split()
+		if len(line) == 3:
+			synvars[line[0]] = line[2]
 	p1.stdout.close()
-	p3 = subprocess.Popen(['grep', '-v', '-e', 'Area', '-e', 'Motion', '-e', 'Scroll'], stdin=p2.stdout,stdout=subprocess.PIPE)
-	p2.stdout.close()
-	for line in p3.stdout:
-		data = str(line, encoding='utf8').split()
-		if data[0] == 'LeftEdge':
-			LeftEdge = int(data[2])
-		elif data[0] == 'RightEdge':
-			RightEdge = int(data[2])
-		elif data[0] == 'TopEdge':
-			TopEdge = int(data[2])
-		elif data[0] == 'BottomEdge':
-			BottomEdge = int(data[2])
-	p3.stdout.close()
 	p1.wait()
-	p2.wait()
-	p3.wait()
-	#LeftEdge
-	#RightEdge
-	#TopEdge
-	#BottomEdge
-	#TouchpadSizeH
+
+	LeftEdge = int(synvars['LeftEdge'])
+	RightEdge = int(synvars['RightEdge'])
+	TopEdge = int(synvars['TopEdge'])
+	BottomEdge = int(synvars['BottomEdge'])
+
 	TouchpadSizeH = BottomEdge - TopEdge
 	TouchpadSizeW = RightEdge - LeftEdge
 	xMinThreshold = TouchpadSizeW * baseDist;
 	yMinThreshold = TouchpadSizeH * baseDist;
+
+	vscrolldelta = int(synvars['VertScrollDelta'])
+	hscrolldelta = int(synvars['HorizScrollDelta'])
+
 	print("LeftEdge: " + str(LeftEdge))
 	print("RightEdge: " + str(RightEdge))
 	print("TopEdge: " + str(TopEdge))
@@ -150,29 +145,12 @@ def main ():
 	print("TouchpadSizeW: " + str(TouchpadSizeW))
 	print("xMinThreshold: " + str(xMinThreshold))
 	print("yMinThreshold: " + str(yMinThreshold))
-
-	# Scrolldeltas
-	p1 = subprocess.Popen(['synclient', '-l'], stdout=subprocess.PIPE)
-	p2 = subprocess.Popen(['grep', 'ScrollDelta'], stdin=p1.stdout, stdout=subprocess.PIPE)
-	p1.stdout.close()
-	p3 = subprocess.Popen(['grep', '-v', '-e', 'Circ'], stdin=p2.stdout,stdout=subprocess.PIPE)
-	p2.stdout.close()
-	for line in p3.stdout:
-		data = str(line, encoding='utf8').split()
-		if data[0] == 'VertScrollDelta':
-			vscrolldelta = int(data[2])
-		elif data[0] == 'HorizScrollDelta':
-			hscrolldelta = int(data[2])
-	p3.stdout.close()
 	print("VScroll: " + str(vscrolldelta))
 	print("HScroll: " + str(hscrolldelta))
 
 
 	print("End of Initialisation")
 	print()
-	p1.wait()
-	p2.wait()
-	p3.wait()
 	time = 0
 	lasttime = -1
 
